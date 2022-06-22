@@ -64,9 +64,9 @@ services:
       '
     healthcheck:
       test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
-      interval: 1s
+      interval: 6s
       timeout: 5s
-      retries: 120
+      retries: 3 
   # I'm using environment to config the ELK Stack no using the config file
   es01:
     depends_on:
@@ -77,7 +77,11 @@ services:
       - certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
     ports:
-      - ${ES_PORT}:9200
+       - target: 9200
+         protocol: tcp
+         x-aws-protocol: http
+      # This will use NLB 
+      # - ${ES_PORT}:9200
     environment:
       - node.name=es01
       - cluster.name=${CLUSTER_NAME}
@@ -97,11 +101,11 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${MEM_LIMIT}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+    #mem_limit: ${MEM_LIMIT}
+    #ulimits:
+    #  memlock:
+    #    soft: -1
+    #    hard: -1
     healthcheck:
       test:
         [
@@ -110,7 +114,7 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 3
 
   es02:
     depends_on:
@@ -137,11 +141,11 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${MEM_LIMIT}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+    #mem_limit: ${MEM_LIMIT}
+    #ulimits:
+    #  memlock:
+    #    soft: -1
+    #    hard: -1
     healthcheck:
       test:
         [
@@ -150,7 +154,7 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 3
 
   es03:
     depends_on:
@@ -177,11 +181,11 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
-    mem_limit: ${MEM_LIMIT}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+    #mem_limit: ${MEM_LIMIT}
+    #ulimits:
+    #  memlock:
+    #    soft: -1
+    #    hard: -1
     healthcheck:
       test:
         [
@@ -190,25 +194,27 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 3
 
   # Logstash   
   logstash:
     user: root
-    depends_on:
-      setup:
-        condition: service_healthy
-      es01: 
-        condition: service_healthy
+    # depends_on:
+    #   setup:
+    #     condition: service_healthy
+    #   es01: 
+    #     condition: service_healthy
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
     volumes:
-      - ./logstash/pipeline/:/usr/share/logstash/pipeline/:ro
+      # Can't bind volume like this, in aws 
+      # - ./logstash/pipeline/:/usr/share/logstash/pipeline/:ro
       - certs:/usr/share/logstash/config/certs
     ports:
-      - ${LOGSTASH_PORT}:5044
-      - "5000:5000/tcp" 
-      - "5000:5000/udp"
-      - "9600:9600"
+      - target: 5044
+        protocol: tcp
+        x-aws-protocol: http
+      # - ${LOGSTASH_PORT}:5044
+      # - "9600:9600"
     environment:
       - QUEUE_TYPE=persisted
       - QUEUE_MAXBYTES=4gb
@@ -222,19 +228,22 @@ services:
       - XPACK_MONITORING_COLLECTION_PIPELINE_DETAILS_ENABLED="true"
 
   kibana:
-    depends_on:
-      es01:
-        condition: service_healthy
-      es02:
-        condition: service_healthy
-      es03:
-        condition: service_healthy
+    # depends_on:
+    #   es01:
+    #     condition: service_healthy
+    #   es02:
+    #     condition: service_healthy
+    #   es03:
+    #     condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
     ports:
-      - ${KIBANA_PORT}:5601
+      - target: 5601
+        protocol: tcp
+        x-aws-protocol: http
+      # - ${KIBANA_PORT}:5601
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=https://es01:9200
@@ -242,27 +251,75 @@ services:
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED="true"
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
-    mem_limit: ${MEM_LIMIT}
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
-        ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+    #mem_limit: ${MEM_LIMIT}
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD-SHELL",
+    #       "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
+    #     ]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 3
 
 volumes:
   certs:
-    driver: local
+   driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+      uid: 0
+      gid: 0
   esdata01:
-    driver: local
+    driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+      uid: 0
+      gid: 0
   esdata02:
-    driver: local
+    driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+      uid: 0
+      gid: 0
   esdata03:
-    driver: local
+    driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+      uid: 0
+      gid: 0 
   kibanadata:
-    driver: local
+    driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+      uid: 0
+      gid: 0
   logstashdata:
-    driver: local
+    driver_opts:
+      # Filesystem configuration
+      backup_policy: ENABLED
+      lifecycle_policy: AFTER_14_DAYS
+      performance_mode: maxIO
+      throughput_mode: provisioned
+      provisioned_throughput: 1
+      uid: 0
+      gid: 0
