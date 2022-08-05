@@ -4,7 +4,8 @@
 #
 server.name: kibana
 server.host: 0.0.0.0
-elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTS}" ]
+elasticsearch.requestTimeout: ${E_REQUEST_TIMEOUT}
 monitoring.ui.container.elasticsearch.enabled: true
 
 ## X-Pack security credentials

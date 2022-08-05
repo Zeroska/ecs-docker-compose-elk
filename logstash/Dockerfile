@@ -1,13 +1,17 @@
-ARG STACK_VERSION
-
 # https://www.docker.elastic.co/
-FROM docker.elastic.co/logstash/logstash:${STACK_VERSION}
-WORKDIR /usr/share
+FROM docker.elastic.co/logstash/logstash:7.7.0
 
-COPY ./config/logstash.yml logstash/config/logstash.yml
-COPY ./pipeline/logstash.conf logstash/pipeline/logstash.conf
+# Delete existed config 
+RUN rm -f /usr/share/logstash/pipeline/logstash.conf
 
-# The Cert 
+# Add new config
+COPY ./config/logstash.yml config/logstash.yml
+COPY ./pipeline/logstash.conf pipeline/logstash.conf
+
+# Set ownership
+USER root
+RUN chown -R 1000:0 config/logstash.yml config/pipelines.yml
 
 # Install plugin right here
-RUN logstash-plugin install logstash-filter-multiline 
+RUN bin/logstash-plugin install logstash-filter-multiline 
+USER logstash
