@@ -1,3 +1,39 @@
+cluster.name: "ELKonECS"
+node.name: ${NODE_NAME}
+cluster.initial_master_nodes: ["${HOST_E1}","${HOST_E2}","${HOST_E3}"]
+discovery.seed_hosts: ["${IP1}","${IP2}"]
 network.host: 0.0.0.0
-discovery.type: single-node
-discovery.seed_hosts: ["127.0.0.1"]
+cloud.node.auto_attributes: true
+xpack.security.enabled: true
+xpack.license.self_generated.type: basic
+
+
+# SSL Config
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.key: certs/${NODE_NAME}/{NODE_NAME}.key
+xpack.security.http.ssl.certificate: certs/${NODE_NAME}/${NODE_NAME}.crt
+xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+xpack.security.http.ssl.verification_mode: certificate
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.key: certs/${NODE_NAME}/${NODE_NAME}.key
+xpack.security.transport.ssl.certificate: certs/${NODE_NAME}/${NODE_NAME}.crt
+xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+xpack.security.transport.ssl.verification_mode: certificate
+
+
+
+
+#transport.port: 9300
+#http.port: 9200
+# Co the se xoa 3 dong node. nay 
+#node.ingest: false
+#node.ml: false
+#node.data: false
+# -------- 
+#discovery.ec2.endpoint: ec2.${REGION}.amazonaws.com
+#discovery.ec2.availability_zones: ${REGION}a,${REGION}b
+#discovery.ec2.tag.elastic: "node"
+
+#discovery.ec2.tag.master: "yes"
+#cluster.routing.allocation.awareness.attributes: aws_availability_zone
+#s3.client.default.endpoint: s3.${REGION}.amazonaws.com
