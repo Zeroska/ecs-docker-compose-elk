@@ -6,7 +6,8 @@ ENV HOST_E2 master1
 ENV HOST_E3 master2
 ENV IP1 0.0.0.0
 ENV IP2 0.0.0.0
-
+ENV KIBANA_PASSWORD changme
+ENV ELASTIC_PASSWORD elastic
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
 USER root
 RUN chown 1000:0 config/elasticsearch.yml
@@ -22,15 +23,37 @@ RUN if [ ! -f config/certs/ca.zip ]; then \
     fi; \
     if [ ! -f config/certs/certs.zip ]; then \
     echo "Creating certs";      \
-    # TODO: Should change the host, name, ip later
     echo -ne \ 
     "instances:\n"\
-    "  - name: ${HOST_E1}}\n"\
+    "  - name: ${HOST_E1}\n"\
+    "    dns:\n"\
+    "      - master\n"\ 
+    "    ip:\n"\
+    "      - 100.73.0.45\n"\
     "  - name: ${HOST_E2}\n"\
+    "    dns:\n"\
+    "      - master1\n"\
+    "    ip:\n"\
+    "      - 100.73.0.45\n"\
     "  - name: ${HOST_E3}\n"\
+    "    dns:\n"\
+    "      - master2\n"\
+    "    ip:\n"\
+    "      - 100.73.0.45\n"\
+    "  - name: kibana\n"\
+    "    dns:\n"\
+    "      - kibana\n"\
+    "    ip:\n"\
+    "      - 100.73.0.41\n"\
     "  - name: logstash\n"\
     > config/certs/instances.yml; \
     bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key; \
     unzip config/certs/certs.zip -d config/certs; \
-    fi;
+    fi; \
+    echo "Setting file permissions" \
+    chown -R root:root config/certs; \
+    find . -type d -exec chmod 777 \{\} \;; \
+    find . -type f -exec chmod 777 \{\} \;; \
+    echo "Setting Default Password for The ELK Stack" \
+    bin/elasticsearch-setup-passwords auto
 USER elasticsearch
