@@ -1,14 +1,19 @@
 ---
-## Default Kibana configuration from Kibana base image.
-## https://github.com/elastic/kibana/blob/master/src/dev/build/tasks/os_packages/docker_generator/templates/kibana_yml.template.ts
-#
+# Default Kibana configuration from Kibana base image.
+# https://github.com/elastic/kibana/blob/master/src/dev/build/tasks/os_packages/docker_generator/templates/kibana_yml.template.ts
+
 server.name: kibana
 server.host: 0.0.0.0
 elasticsearch.hosts: [ "${ELASTICSEARCH_HOSTS}" ]
 elasticsearch.requestTimeout: ${E_REQUEST_TIMEOUT}
 monitoring.ui.container.elasticsearch.enabled: true
 
-## X-Pack security credentials
-#
+# SSL for Kibana 
+elasticsearch.ssl.certificateAuthorities: config/certs/ca/ca.crt
+server.ssl.enabled: true
+server.ssl.certificate: config/certs/kibana/kibana.crt
+server.ssl.key: config/certs/kibana/kibana.key
+
+# X-Pack security credentials
 elasticsearch.username: kibana_system
 elasticsearch.password: ${KIBANA_PASSWORD}

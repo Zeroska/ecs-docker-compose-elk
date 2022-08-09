@@ -46,14 +46,18 @@ RUN if [ ! -f config/certs/ca.zip ]; then \
     "    ip:\n"\
     "      - 100.73.0.41\n"\
     "  - name: logstash\n"\
+    "    dns:\n"\
+    "      - logstash\n"\
+    "    ip:\n"\
+    "      - 100.73.0.38\n"\
     > config/certs/instances.yml; \
     bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key; \
     unzip config/certs/certs.zip -d config/certs; \
     fi; \
     echo "Setting file permissions" \
-    chown -R root:root config/certs; \
+    chown -R 1000:0 config/certs; \
     find . -type d -exec chmod 777 \{\} \;; \
-    find . -type f -exec chmod 777 \{\} \;; \
-    echo "Setting Default Password for The ELK Stack" \
-    bin/elasticsearch-setup-passwords auto
+    find . -type f -exec chmod 777 \{\} \;; 
+    # echo "Setting Default Password for The ELK Stack" \
+    # bin/elasticsearch-setup-passwords auto
 USER elasticsearch

@@ -3,4 +3,17 @@
 ## https://github.com/elastic/logstash/blob/master/docker/data/logstash/config/logstash-full.yml
 #
 http.host: "0.0.0.0"
-xpack.monitoring.enabled: false
+node.name: logstash
+
+xpack.monitoring.enabled: true  
+xpack.monitoring.elasticsearch.hosts: ["${ELASTIC_HOST}"]
+xpack.monitoring.collection.pipeline.details.enabled: true
+xpack.monitoring.elasticsearch.username: logstash_system
+xpack.monitoring.elasticsearch.password: "${LOGSTASH_PASSWORD}"
+
+xpack.monitoring.elasticsearch.ssl.certificate_authority: config/certs/ca/ca.crt
+
+queue.type: persisted
+queue.max_bytes: 4gb
+
+

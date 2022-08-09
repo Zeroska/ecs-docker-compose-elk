@@ -1,5 +1,7 @@
 # https://www.docker.elastic.co/
-FROM docker.elastic.co/logstash/logstash:7.7.0
+FROM docker.elastic.co/logstash/logstash:8.0.1
+ENV ELASTIC_PASSWORD elastic
+ENV ELASTIC_HOST https://master:9200
 
 # Delete existed config 
 RUN rm -f /usr/share/logstash/pipeline/logstash.conf

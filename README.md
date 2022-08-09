@@ -12,3 +12,4 @@ Store all the plugins for the logstash, currenly is empty but in the future it w
 
 Mostly store logstash pipeline and logtash config (if decided to use config file rather than eheanvironment)
 
+## Explain Elasticsearch config and SSL creation
