@@ -1,6 +1,7 @@
 # https://www.docker.elastic.co/
 FROM docker.elastic.co/logstash/logstash:8.0.1
-ENV ELASTIC_PASSWORD elastic
+ENV LOGSTASH_PASSWORD elastic
+ENV LOGSTASH_USER logstash_system
 ENV ELASTIC_HOST https://master:9200
 
 # Delete existed config 

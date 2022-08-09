@@ -1,4 +1,5 @@
 FROM docker.elastic.co/elasticsearch/elasticsearch:8.0.1
+# ENV for the AWS ECS environment varibles
 ENV REGION ap-southeast-1
 ENV NODE_NAME master
 ENV HOST_E1 master
@@ -6,6 +7,7 @@ ENV HOST_E2 master1
 ENV HOST_E3 master2
 ENV IP1 0.0.0.0
 ENV IP2 0.0.0.0
+ENV ROLE master
 ENV KIBANA_PASSWORD changme
 ENV ELASTIC_PASSWORD elastic
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
@@ -58,6 +60,5 @@ RUN if [ ! -f config/certs/ca.zip ]; then \
     chown -R 1000:0 config/certs; \
     find . -type d -exec chmod 777 \{\} \;; \
     find . -type f -exec chmod 777 \{\} \;; 
-    # echo "Setting Default Password for The ELK Stack" \
-    # bin/elasticsearch-setup-passwords auto
+
 USER elasticsearch

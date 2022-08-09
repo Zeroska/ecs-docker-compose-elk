@@ -20,8 +20,8 @@ xpack.security.transport.ssl.certificate: certs/${NODE_NAME}/${NODE_NAME}.crt
 xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
 xpack.security.transport.ssl.verification_mode: certificate
 
-
-
+# Node roles
+node.roles: "${ROLE}"
 
 #transport.port: 9300
 #http.port: 9200
@@ -36,4 +36,6 @@ xpack.security.transport.ssl.verification_mode: certificate
 
 #discovery.ec2.tag.master: "yes"
 #cluster.routing.allocation.awareness.attributes: aws_availability_zone
+
+# AWS S3 Config
 #s3.client.default.endpoint: s3.${REGION}.amazonaws.com
