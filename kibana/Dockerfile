@@ -2,7 +2,7 @@
 FROM docker.elastic.co/kibana/kibana:8.0.1
 
 # Remember to set ENV for the ELASTICSEARCH HOSTS
-ENV ELASTICSEARCH_HOSTS 0.0.0.0
+ENV ELASTICSEARCH_HOST 0.0.0.0
 ENV KIBANA_PASSWORD elastic
 COPY ./config/kibana.yml /usr/share/kibana/config
 USER root

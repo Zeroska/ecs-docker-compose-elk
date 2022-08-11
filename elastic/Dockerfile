@@ -29,19 +29,13 @@ RUN if [ ! -f config/certs/ca.zip ]; then \
     "instances:\n"\
     "  - name: ${HOST_E1}\n"\
     "    dns:\n"\
-    "      - master\n"\ 
-    "    ip:\n"\
-    "      - 100.73.0.45\n"\
+    "      - internal-alb-elk-elasticsearch-01-211939396.ap-southeast-1.elb.amazonaws.com\n"\ 
     "  - name: ${HOST_E2}\n"\
     "    dns:\n"\
-    "      - master1\n"\
-    "    ip:\n"\
-    "      - 100.73.0.45\n"\
+    "      - internal-alb-elk-elasticsearch-01-211939396.ap-southeast-1.elb.amazonaws.com\n"\
     "  - name: ${HOST_E3}\n"\
     "    dns:\n"\
-    "      - master2\n"\
-    "    ip:\n"\
-    "      - 100.73.0.45\n"\
+    "      - internal-alb-elk-elasticsearch-01-211939396.ap-southeast-1.elb.amazonaws.com\n"\
     "  - name: kibana\n"\
     "    dns:\n"\
     "      - kibana\n"\
