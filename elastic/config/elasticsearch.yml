@@ -1,7 +1,7 @@
 cluster.name: "ELKonECS"
 node.name: ${NODE_NAME}
 cluster.initial_master_nodes: ["${HOST_E1}","${HOST_E2}","${HOST_E3}"]
-discovery.seed_hosts: ["${IP1}","${IP2}"]
+discovery.seed_hosts: ["${IP1}","${IP2}","${IP3}"]
 network.host: 0.0.0.0
 cloud.node.auto_attributes: true
 xpack.security.enabled: true
