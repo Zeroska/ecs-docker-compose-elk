@@ -1,16 +1,15 @@
 cluster.name: "ELKonECS"
 node.name: ${NODE_NAME}
 cluster.initial_master_nodes: ["${HOST_E1}","${HOST_E2}","${HOST_E3}"]
-discovery.seed_hosts: ["${IP1}","${IP2}","${IP3}"]
+discovery.seed_hosts: []
 network.host: 0.0.0.0
 network.publish_host: _ec2:privateIp_
 transport.publish_host: _ec2:privateIp_
-discovery.seed_providers: ec2
+discovery.seed_providers: file
 cloud.node.auto_attributes: true
 xpack.security.enabled: true
 xpack.license.self_generated.type: basic
-
-
+path.data: /usr/share/elasticsearch/${DATA_NAME}
 # SSL Config
 xpack.security.http.ssl.enabled: true
 xpack.security.http.ssl.key: certs/${NODE_NAME}/${NODE_NAME}.key

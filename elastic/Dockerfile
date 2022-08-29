@@ -5,13 +5,12 @@ ENV NODE_NAME master
 ENV HOST_E1 master
 ENV HOST_E2 master1
 ENV HOST_E3 master2
-ENV IP1 0.0.0.0
-ENV IP2 0.0.0.0
-ENV IP3 0.0.0.0
 ENV ROLE master
+ENV DATA_NAME data
 ENV KIBANA_PASSWORD changme
 ENV ELASTIC_PASSWORD elastic
 COPY config/elasticsearch.yml /usr/share/elasticsearch/config/
+COPY config/unicast_hosts.txt /usr/share/elasticsearch/config/
 USER root
 RUN chown 1000:0 config/elasticsearch.yml
 # Install plugins
