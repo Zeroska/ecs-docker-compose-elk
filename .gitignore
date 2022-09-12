@@ -1,0 +1,3 @@
+./logstash/logstash_deploy.sh
+./elastic/elastic_deploy.sh
+
