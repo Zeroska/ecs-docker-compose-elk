@@ -1,5 +1,8 @@
 # Logstash
 
+Currently Logstash TCP input plugin Using ECS vs so you should check the pre defined field using ECS v1 in the documetation.
+
+The Beat input plugin *NOT* using ECS 
 ## Environment varibles
 
 - ELASTIC_HOST
