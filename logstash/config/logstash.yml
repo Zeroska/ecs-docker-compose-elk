@@ -13,6 +13,7 @@ xpack.monitoring.elasticsearch.password: "${LOGSTASH_PASSWORD}"
 
 xpack.monitoring.elasticsearch.ssl.certificate_authority: config/certs/ca/ca.crt
 
-# queue.type: persisted
-# queue.max_bytes: 4gb
+# Add PQ for testing 
+queue.type: persisted
+queue.max_bytes: 2gb
 
